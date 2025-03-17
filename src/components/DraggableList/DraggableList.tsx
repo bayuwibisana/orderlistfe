@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import React from 'react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './SortableItem';
 
@@ -45,10 +45,10 @@ const DraggableList: React.FC<DraggableListProps> = ({ items, onReorder, onEditi
         onDelete(id);
     };
 
-    const handleDragEnd = (event: any) => {
+    const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
-        if (active.id !== over.id) {
+        if (over && active.id !== over.id) {
             const newItems = arrayMove(items, items.findIndex((item) => item.id === active.id), items.findIndex((item) => item.id === over.id));
             onReorder(newItems); // Panggil fungsi onReorder untuk mengupdate data di parent component
         }

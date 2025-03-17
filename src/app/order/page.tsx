@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { isAuthenticated } from '@/utils/auth';
 import { useRouter } from 'next/navigation';
 import { API_ENDPOINTS } from '@/config';
@@ -33,17 +33,8 @@ const OrderPage: React.FC = () => {
   const [data, setData] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Order | null>(null);
-
-  useEffect(() => {
-    if (isAuthenticated()) {
-      fetchData();
-    } else {
-      router.push('/');
-    }
-  }, [router]);
-
-
-  const fetchData = async () => {
+  
+  const fetchData = useCallback(async () => {
     try {
       const response = await fetch(API_ENDPOINTS.ORDER_GET, {
         method: 'GET',
@@ -53,24 +44,32 @@ const OrderPage: React.FC = () => {
           'Authorization': `Bearer ${getToken()}`,
         },
       });
-
-
+  
       if (response.status === 401) {
         removeToken();
         router.push('/');
         return;
       }
-
+  
       const result: ApiResponse = await response.json();
       setData(result.data);
-
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  }, [router]);
 
-  };
+  useEffect(() => {
+    if (isAuthenticated()) {
+      fetchData();
+    } else {
+      router.push('/');
+    }
+  }, [fetchData, router]);
+
+
+
 
 
   interface OrderUpdate {

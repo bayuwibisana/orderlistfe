@@ -1,6 +1,6 @@
 // app/home/page.tsx
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/utils/auth';
 
